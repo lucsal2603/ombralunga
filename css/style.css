@@ -307,9 +307,9 @@ html.statico .abbaglio, html.qa .abbaglio { display: none; }
 }
 
 /* ------------------------------------------------------------------ all'ombra: il manifesto */
-.ombra { position: relative; height: calc(var(--schermo) * 3); background: var(--abbaglio); z-index: 1; }
+.ombra { position: relative; height: calc(var(--schermo) * 3); background: #3A3456; z-index: 1; }
 .ombra__palco {
-  position: sticky; top: 0; height: var(--schermo); overflow: hidden;
+  position: sticky; top: 0; height: var(--schermo); overflow: hidden; background: var(--abbaglio);
   display: grid; place-items: center; padding: 0 var(--margine);
 }
 .ombra__quando { display: none; }
@@ -707,3 +707,9 @@ html.statico .muta__parola { opacity: 1 !important; font-size: clamp(40px, 8vw, 
 html.statico .muta__parola:nth-child(2n+1) { opacity: .45 !important; }
 html.statico .muta__dove { display: none; }
 html.statico .terrazze { display: none; }
+
+/* il portico: un arco d'ombra copre i salti lunghi della pagina */
+.passaggio { position: fixed; inset: 0; z-index: 95; pointer-events: none; visibility: hidden; overflow: hidden; }
+.passaggio i { position: absolute; left: -12vw; right: -12vw; top: 0; height: 145vh; transform: translateY(70%); border-radius: 50% 50% 0 0 / 24vh 24vh 0 0; }
+.passaggio__penombra { background: #6C65A2; }
+.passaggio__ombra { background: #3F3A6E; }

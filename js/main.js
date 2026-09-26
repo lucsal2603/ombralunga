@@ -1,8 +1,8 @@
 /* Ombralunga: la regia.
    GSAP 3.15 (ScrollTrigger, SplitText, CustomEase, MotionPath, Flip) + Lenis.
    Una sola regola: ogni ombra viene da una luce. Le funzioni sono nell'ordine delle sezioni. */
-import { creaPergolato } from './pergolato.js?v=20260926102449';
-import { creaAmaca } from './amaca.js?v=20260926102449';
+import { creaPergolato } from './pergolato.js?v=20260926103837';
+import { creaAmaca } from './amaca.js?v=20260926103837';
 
 const html = document.documentElement;
 const QA = html.classList.contains('qa');
@@ -29,6 +29,11 @@ if (!QA && !STATICO && window.Lenis) {
 }
 gsap.ticker.lagSmoothing(0);
 const vaiA = (dove, opz = {}) => {
+  /* i salti lunghi passano sotto l'arco del portico invece di attraversare tutte le scene fissate */
+  if (typeof dove !== 'number' && !opz.immediate && !STATICO && !QA) {
+    const y = dove.getBoundingClientRect().top + scrollY;
+    if (Math.abs(y - scrollY) > innerHeight * 2.5) { passaggioLungo(dove); return; }
+  }
   if (lenis) lenis.scrollTo(dove, { duration: 1.6, easing: (t) => 1 - Math.pow(1 - t, 3), ...opz });
   else {
     const y = typeof dove === 'number' ? dove : dove.getBoundingClientRect().top + scrollY;
@@ -36,6 +41,26 @@ const vaiA = (dove, opz = {}) => {
   }
 };
 ScrollTrigger.addEventListener('refresh', () => lenis && lenis.resize());
+
+let passaggioInCorso = false;
+function passaggioLungo(dest) {
+  if (passaggioInCorso) return; passaggioInCorso = true;
+  const box = $('.passaggio'), pen = $('.passaggio__penombra'), omb = $('.passaggio__ombra');
+  const arcoSopra = '50% 50% 0 0 / 24vh 24vh 0 0', arcoSotto = '0 0 50% 50% / 0 0 24vh 24vh';
+  gsap.set(box, { visibility: 'visible' });
+  gsap.set([pen, omb], { yPercent: 70, borderRadius: arcoSopra });
+  gsap.timeline({ onComplete: () => { gsap.set(box, { visibility: 'hidden' }); passaggioInCorso = false; } })
+    .to(pen, { yPercent: 0, duration: 0.85, ease: 'expo.inOut' }, 0)
+    .to(omb, { yPercent: 0, duration: 0.85, ease: 'expo.inOut' }, 0.07)
+    .add(() => {
+      if (lenis) lenis.scrollTo(dest, { immediate: true, force: true });
+      else scrollTo(0, dest.getBoundingClientRect().top + scrollY);
+      ScrollTrigger.update();
+    })
+    .set([pen, omb], { borderRadius: arcoSotto }, '+=0.05')
+    .to(omb, { yPercent: -125, duration: 0.8, ease: 'power4.out' }, '+=0.1')
+    .to(pen, { yPercent: -125, duration: 0.8, ease: 'power4.out' }, '<0.07');
+}
 
 /* ------------------------------------------------------------------ grana di stampa */
 (function grana() {
@@ -353,6 +378,10 @@ function manifesto() {
     scrollTrigger: { trigger: sezione, start: 'top top', end: () => '+=' + Math.max(1, sezione.offsetHeight - innerHeight * 2), scrub: 0.6 },
   });
   aggiorna();
+  /* quando sale la sezione delle camere il manifesto si stacca come un cartoncino, con la sua ombra */
+  gsap.fromTo(palco, { scaleX: 1, scaleY: 1, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, boxShadow: '0px 0px 0px rgba(20,16,40,0)' },
+    { scaleX: 0.94, scaleY: 0.97, borderBottomLeftRadius: 36, borderBottomRightRadius: 36, boxShadow: '0px 40px 70px rgba(20,16,40,.45)', transformOrigin: '50% 0%', ease: 'none',
+      scrollTrigger: { trigger: '.camere', start: 'top bottom', end: 'top top', scrub: true } });
   /* le icone nel testo ondeggiano come foglie */
   $$('.ombra__testo--nitido .ic').forEach((ic, i) => {
     gsap.fromTo(ic, { rotation: -7 }, { rotation: 7, duration: 2.2 + i * 0.3, ease: 'sine.inOut', yoyo: true, repeat: -1, transformOrigin: '50% 90%' });
