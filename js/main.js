@@ -1,8 +1,8 @@
 /* Ombralunga: la regia.
    GSAP 3.15 (ScrollTrigger, SplitText, CustomEase, MotionPath, Flip) + Lenis.
    Una sola regola: ogni ombra viene da una luce. Le funzioni sono nell'ordine delle sezioni. */
-import { creaPergolato } from './pergolato.js?v=20260926102243';
-import { creaAmaca } from './amaca.js?v=20260926102243';
+import { creaPergolato } from './pergolato.js?v=20260926102449';
+import { creaAmaca } from './amaca.js?v=20260926102449';
 
 const html = document.documentElement;
 const QA = html.classList.contains('qa');
@@ -142,11 +142,12 @@ const apertura = (() => {
   const mira = { x: 0, y: 0 };
   let sporco = true;
   const segna = () => { sporco = true; };
+  const ultimaLuce = { x: '', y: '' };
 
   function applica() {
     if (!sporco) return; sporco = false;
     const e = clamp(2, 72, base.el + scorri.el - mira.y * 3);
-    const a = clamp(-62, 40, base.az + scorri.az + mira.x * 8);
+    const a = clamp(-62, 40, base.az + scorri.az + mira.x * 13);
     const t = tavolozza(e);
     el.ca.setAttribute('stop-color', t.ca); el.cm.setAttribute('stop-color', t.cm); el.cb.setAttribute('stop-color', t.cb);
     el.cl.setAttribute('stop-color', t.cl); el.cv.setAttribute('stop-color', t.cv);
@@ -165,9 +166,12 @@ const apertura = (() => {
     scena.style.setProperty('--ombra-forza', t.fo.toFixed(3));
     pied.stendi(e, a, 1);
     /* la luce dei link e dei bottoni segue il sole dell'apertura, entro limiti tranquilli */
-    const lx = clamp(-4, 4, -Math.tan(rad(a)) * 3), ly = clamp(2, 5, 2 + L * 0.6);
-    html.style.setProperty('--lx', lx.toFixed(1) + 'px');
-    html.style.setProperty('--ly', ly.toFixed(1) + 'px');
+    const lx = (clamp(-4, 4, -Math.tan(rad(a)) * 3)).toFixed(1), ly = (clamp(2, 5, 2 + L * 0.6)).toFixed(1);
+    if (lx !== ultimaLuce.x || ly !== ultimaLuce.y) {
+      ultimaLuce.x = lx; ultimaLuce.y = ly;
+      html.style.setProperty('--lx', lx + 'px');
+      html.style.setProperty('--ly', ly + 'px');
+    }
   }
   gsap.ticker.add(applica);
 
@@ -387,9 +391,9 @@ function camere() {
   gsap.set(luci, { transformOrigin: '50% 100%' });
   function aggiornaLuci() {
     const W = innerWidth;
-    stanze.forEach((s, i) => {
-      const r = s.getBoundingClientRect();
-      const t = clamp(-1.3, 1.3, (r.left + r.width / 2 - W / 2) / (W / 2));
+    /* prima si leggono tutte le posizioni, poi si scrive: niente letture e scritture alternate */
+    const pos = stanze.map((s) => { const r = s.getBoundingClientRect(); return clamp(-1.3, 1.3, (r.left + r.width / 2 - W / 2) / (W / 2)); });
+    pos.forEach((t, i) => {
       gsap.set(luci[i], { skewX: t * 22, x: t * 40, opacity: 0.95 - Math.abs(t) * 0.25 });
       if (!archi[i].classList.contains('in-volo')) gsap.set(quadri[i], { xPercent: -t * 5 });
     });
@@ -585,8 +589,11 @@ function muta() {
   const W = parole.map((w) => +w.dataset.w || 80);
   const n = parole.length / 2;
   const stato = { p: 0 };
+  let corpo = 200;
+  const misuraCorpo = () => { corpo = parseFloat(getComputedStyle(parole[0]).fontSize) || 200; };
+  misuraCorpo();
+  ScrollTrigger.addEventListener('refresh', misuraCorpo);
   function disegna() {
-    const corpo = parseFloat(getComputedStyle(parole[0]).fontSize) || 200;
     const pp = clamp(0, 0.9999, stato.p) * n;
     const seg = Math.floor(pp), t = pp - seg;
     const grezzo = parole[seg * 2], fatto = parole[seg * 2 + 1], poi = parole[seg * 2 + 2];
