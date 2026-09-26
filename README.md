@@ -8,14 +8,16 @@ Tutti i dati sono inventati: vedi [DA-VERIFICARE.md](DA-VERIFICARE.md). Il siste
 
 1. **La meridiana (apertura):** l'abbaglio si ritira, i colli salgono, le lettere di OMBRALUNGA si alzano dal campo con le loro ombre. Il sole scende da mezzogiorno al pomeriggio e le ombre girano. Col mouse il sole si sposta un poco. Scorrendo il sole va verso sera, le lettere si allungano (asse di larghezza del carattere) e il quadro si stacca e si aggancia a destra.
 2. **All'ombra (manifesto):** il testo è abbagliato e trema nella calura; un'ombra passa e le parole diventano nitide.
-3. **Le camere:** la sezione sale con il bordo a festoni di una tenda a righe. Portico orizzontale: gli archi si svelano dal basso, dentro c'è una stanza illustrata con la macchia di sole che si sposta. Cliccando un arco, l'arco vola in una scheda (Flip) e torna al suo posto alla chiusura.
+3. **Le camere:** la sezione sale con il bordo a festoni di una tenda a righe, e intanto il manifesto si stacca come un cartoncino con la sua ombra. Portico orizzontale: gli archi si svelano dal basso, dentro c'è una stanza illustrata con la macchia di sole che si sposta. Sopra il portico scivola la luce a lamelle delle persiane. Cliccando un arco, l'arco vola in una scheda (Flip) e torna al suo posto alla chiusura.
 4. **A tavola:** la tovaglia si srotola e i piatti cadono dall'alto; l'ombra si stringe quando si posano. Sopra, le ombre a macchie del pergolato in WebGL. Il menù si segna mentre arrivano i piatti; col mouse un piatto si solleva e mostra il nome.
 5. **La controra:** il titolo trema nella calura e si allarga pigro; l'amaca sotto il noce è una catena di punti con la gravità, dondola al vento e si spinge col mouse o col dito.
 6. **La tenuta:** numeri che contano e si allungano.
 7. **Mentre state all'ombra:** scena fissata in cui le parole si sciolgono una nell'altra (uva, vino; olive, olio; grano, pane; latte, formaggio) con un filtro SVG.
 8. **Da un'ombra all'altra:** panorama orizzontale dei Colli con parallasse, ombre di nuvole e cartelli che si alzano dal prato.
 9. **Un'ombra:** le terrazze si ritirano all'ingresso; l'ombra del campanile di San Marco gira e il banco del vino la segue; il calice si riempie scorrendo e cambia colore col vino scelto.
-10. **Nastro, Prenota, Piede:** nastro che pende con la velocità di scorrimento; modulo dimostrativo; il nome sotto la luna, con l'ombra verso chi guarda.
+10. **Nastro, Prenota, Piede:** nastro diviso da una meridiana (metà al sole con l'ombra netta, metà all'ombra) che pende con la velocità; modulo dimostrativo; il nome sotto la luna, con l'ombra verso chi guarda e le lettere che si scaldano vicino al puntatore come sotto una lanterna.
+
+I salti lunghi del menù passano sotto un arco d'ombra del portico: l'arco copre lo schermo, la pagina salta, l'arco si ritira.
 
 ## Struttura
 

@@ -389,6 +389,17 @@ html.statico .camere { margin-top: 0; }
 .stanza__dati { list-style: none; margin: 0 0 var(--s2); padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--f-titoli); font-size: 14px; font-weight: 550; }
 .stanza__dati li { display: inline-flex; align-items: center; gap: 6px; }
 .stanza__dati svg { width: 18px; height: 18px; }
+/* la luce che entra dalle persiane: un parallelogramma di lamelle chiare che scivola sul muro */
+.persiane-luce {
+  position: absolute; z-index: 2; pointer-events: none;
+  left: 18%; top: 4%; width: 46vw; height: 82%;
+  background: repeating-linear-gradient(180deg, rgba(255, 238, 196, .8) 0 16px, rgba(255, 238, 196, 0) 16px 30px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent), linear-gradient(transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent), linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-composite: intersect;
+  mix-blend-mode: soft-light; opacity: .6;
+  transform: skewX(var(--pendio, -24deg)) translateX(var(--scorre, 0px));
+}
+html.statico .persiane-luce { display: none; }
 .portico__pavimento {
   position: absolute; left: 0; right: 0; bottom: 0; height: 11%; z-index: -1;
   background: repeating-linear-gradient(100deg, rgba(255, 238, 190, .45) 0 70px, rgba(91, 84, 150, .06) 70px 260px), #E2C497;

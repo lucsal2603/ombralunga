@@ -1,8 +1,8 @@
 /* Ombralunga: la regia.
    GSAP 3.15 (ScrollTrigger, SplitText, CustomEase, MotionPath, Flip) + Lenis.
    Una sola regola: ogni ombra viene da una luce. Le funzioni sono nell'ordine delle sezioni. */
-import { creaPergolato } from './pergolato.js?v=20260926103837';
-import { creaAmaca } from './amaca.js?v=20260926103837';
+import { creaPergolato } from './pergolato.js?v=20260926110120';
+import { creaAmaca } from './amaca.js?v=20260926110120';
 
 const html = document.documentElement;
 const QA = html.classList.contains('qa');
@@ -408,6 +408,7 @@ function camere() {
   const binario = $('.portico__binario');
   const stanze = $$('.stanza', binario);
   const pavimento = $('.portico__pavimento');
+  const persiane = $('.persiane-luce');
   const distanza = () => Math.max(0, binario.scrollWidth - portico.clientWidth);
   const corsa = gsap.to(binario, {
     x: () => -distanza(), ease: 'none',
@@ -427,6 +428,10 @@ function camere() {
       if (!archi[i].classList.contains('in-volo')) gsap.set(quadri[i], { xPercent: -t * 5 });
     });
     pavimento.style.backgroundPosition = `${(-corsa.progress() * 900).toFixed(1)}px 0`;
+    /* le persiane: il sole gira e la luce scivola e s'inclina lungo il muro */
+    const pp = corsa.progress();
+    persiane.style.setProperty('--pendio', (-14 - pp * 26).toFixed(2) + 'deg');
+    persiane.style.setProperty('--scorre', (pp * innerWidth * 0.35).toFixed(1) + 'px');
   }
   ScrollTrigger.create({ trigger: portico, start: 'top bottom', end: 'bottom top', onUpdate: aggiornaLuci, onRefresh: aggiornaLuci });
   aggiornaLuci();
@@ -781,6 +786,31 @@ function piede(fermo = false) {
   pied.stendi(24, 22, 1);
   const luna = { el: 34, az: 30 };
   if (fermo) { pied.stendi(16, 26); ScrollTrigger.addEventListener('refreshInit', () => { pied.misura(); pied.stendi(16, 26); }); return; }
+  /* la lanterna: le lettere vicine al puntatore si scaldano, le altre restano al chiaro di luna */
+  const scuro = '#A9A9CF', caldo = '#F2C14E';
+  const tinta = gsap.utils.interpolate(scuro, caldo);
+  let centri = [], lume = { x: -9999, y: -9999 }, attiva = false;
+  const misuraCentri = () => { centri = pied.lettere.map((l) => { const r = l.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, h: r.height }; }); };
+  const accendi = () => {
+    pied.lettere.forEach((l, i) => {
+      const c = centri[i]; if (!c) return;
+      const k = clamp(0, 1, 1 - Math.hypot(lume.x - c.x, (lume.y - c.y) * 0.7) / (c.h * 1.6));
+      l.style.color = tinta(k * k);
+    });
+  };
+  gsap.set(pied.lettere, { color: scuro });
+  const piedeEl = $('.piede');
+  if (!TOCCO) {
+    piedeEl.addEventListener('pointerenter', () => { misuraCentri(); attiva = true; });
+    piedeEl.addEventListener('pointermove', (e) => { if (!attiva) return; lume.x = e.clientX; lume.y = e.clientY; accendi(); });
+    piedeEl.addEventListener('pointerleave', () => { attiva = false; lume.x = lume.y = -9999; accendi(); });
+  } else {
+    const giro = gsap.to(lume, { x: innerWidth + 80, duration: 5.5, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true,
+      onStart: misuraCentri, onUpdate: () => { if (!centri.length) misuraCentri(); lume.y = centri[0] ? centri[0].y : 0; accendi(); } });
+    gsap.set(lume, { x: -80 });
+    ScrollTrigger.create({ trigger: '.piede', start: 'top 80%', end: 'bottom top', onToggle: (s) => { if (s.isActive) { misuraCentri(); giro.play(); } else giro.pause(); } });
+  }
+  addEventListener('scroll', () => { if (attiva) misuraCentri(); }, { passive: true });
   gsap.timeline({ scrollTrigger: { trigger: '.piede', start: 'top 75%', once: true } })
     .from(pied.lettere, { scaleY: 0, duration: 1.1, ease: 'back.out(1.5)', stagger: 0.05 }, 0)
     .from(pied.ombre, { scaleY: 0, duration: 1.1, ease: 'back.out(1.5)', stagger: 0.05 }, 0)
