@@ -1,8 +1,8 @@
 /* Ombralunga: la regia.
    GSAP 3.15 (ScrollTrigger, SplitText, CustomEase, MotionPath, Flip) + Lenis.
    Una sola regola: ogni ombra viene da una luce. Le funzioni sono nell'ordine delle sezioni. */
-import { creaPergolato } from './pergolato.js?v=20260926100048';
-import { creaAmaca } from './amaca.js?v=20260926100048';
+import { creaPergolato } from './pergolato.js?v=20260926102243';
+import { creaAmaca } from './amaca.js?v=20260926102243';
 
 const html = document.documentElement;
 const QA = html.classList.contains('qa');
@@ -697,21 +697,24 @@ function vino(fermo = false) {
   scegli($('.vino-voce'));
 }
 
-/* ================================================================== NASTRO: pende con la velocità */
+/* ================================================================== NASTRO: al sole e all'ombra
+   Due nastri uguali e sincronizzati, ognuno ritagliato su una metà: le parole entrano al sole
+   con l'ombra netta e, passata la meridiana, sono all'ombra. L'ombra al sole pende con la velocità. */
 function nastro() {
-  const binario = $('.nastro__binario');
+  const binari = $$('.nastro__binario');
+  binari.forEach((b) => { const p = b.querySelector('.nastro__pezzo'); for (let i = 0; i < 3; i++) b.appendChild(p.cloneNode(true)); });
   const pezzo = $('.nastro__pezzo');
-  for (let i = 0; i < 3; i++) binario.appendChild(pezzo.cloneNode(true));
+  const alSole = $$('.nastro__meta--sole .nastro__pezzo');
   let x = 0, vel = 0, pend = 0;
-  const pezzi = $$('.nastro__pezzo', binario);
   if (lenis) lenis.on('scroll', (e) => { vel = clamp(-60, 60, e.velocity || 0); });
   const giro = () => {
     const w = pezzo.offsetWidth || 1;
     x -= 0.9 + Math.abs(vel) * 0.35;
     if (x <= -w) x += w;
-    binario.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+    const t = `translate3d(${x.toFixed(2)}px,0,0)`;
+    binari.forEach((b) => { b.style.transform = t; });
     pend += (vel * 0.6 - pend) * 0.08; vel *= 0.92;
-    pezzi.forEach((p) => p.style.setProperty('--pendenza', pend.toFixed(2)));
+    alSole.forEach((p) => p.style.setProperty('--pendenza', pend.toFixed(2)));
   };
   ScrollTrigger.create({ trigger: '.nastro', start: 'top bottom', end: 'bottom top', onToggle: (s) => (s.isActive ? gsap.ticker.add(giro) : gsap.ticker.remove(giro)) });
 }

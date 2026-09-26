@@ -620,16 +620,27 @@ html.statico .muta__palco { position: relative; height: auto; padding: var(--s6)
   .scheda__posto { max-width: 62%; }
 }
 
-/* ------------------------------------------------------------------ nastro */
-.nastro { background: var(--intonaco); padding: clamp(28px, 4vw, 56px) 0; overflow: hidden; }
+/* ------------------------------------------------------------------ nastro: metà al sole, metà all'ombra */
+.nastro { position: relative; height: clamp(118px, 13vw, 210px); overflow: hidden; background: var(--sole); }
+.nastro__meta { position: absolute; inset: 0; display: flex; align-items: center; }
+.nastro__meta--sole { background: var(--sole); clip-path: inset(0 0 0 50%); }
+.nastro__meta--ombra { background: #4A447E; clip-path: inset(0 50% 0 0); }
 .nastro__binario { display: flex; width: max-content; will-change: transform; }
 .nastro__pezzo {
   display: inline-flex; align-items: center; gap: .4em; padding-right: .4em;
   font-family: var(--f-titoli); font-weight: 850; font-stretch: 78%;
-  font-size: clamp(44px, 7vw, 120px); line-height: 1; white-space: nowrap; color: var(--coppo);
-  text-shadow: calc(var(--pendenza, 0) * 1px) 6px 0 rgba(91, 84, 150, .25);
+  font-size: clamp(44px, 7vw, 120px); line-height: 1; white-space: nowrap;
 }
-.nastro__pezzo svg { width: .8em; height: .8em; color: var(--persiana); }
+.nastro__pezzo svg { width: .8em; height: .8em; }
+.nastro__meta--sole .nastro__pezzo { color: var(--coppo); text-shadow: calc(8px + var(--pendenza, 0) * 1px) 7px 0 rgba(91, 84, 150, .42); }
+.nastro__meta--sole .nastro__pezzo svg { color: var(--persiana); }
+.nastro__meta--ombra .nastro__pezzo { color: var(--calce); }
+.nastro__meta--ombra .nastro__pezzo svg { color: var(--sole); }
+.nastro__gnomone { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; background: var(--inchiostro); z-index: 2; }
+.nastro__gnomone::after { content: ''; position: absolute; left: 50%; top: 0; width: 22px; height: 16px; margin-left: -11px; background: var(--inchiostro); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.nastro__etichetta { position: absolute; bottom: 10px; z-index: 2; font-family: var(--f-testo); font-style: italic; font-size: 16px; }
+.nastro__etichetta--ombra { right: calc(50% + 14px); color: var(--calce); }
+.nastro__etichetta--sole { left: calc(50% + 14px); color: var(--inchiostro); }
 
 /* ------------------------------------------------------------------ prenota */
 .prenota { background: var(--persiana); color: var(--calce); padding: clamp(100px, 12vw, 180px) var(--margine); }
